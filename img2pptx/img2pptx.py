@@ -18,12 +18,14 @@ def collect_images(img_path):
 
 
 @click.command()
-@click.option('--img_path', '-i', default='images', help='Путь к папке с изображениями')
-@click.option('--result_pptx', '-r', help='Итоговый файл презентации')
-def create_pptx(img_path, result_pptx):
+@click.option('--width', '-w', default=53.333, help='Ширина слайда в дюймах, по умолчанию: 53.333')
+@click.option('--height', '-h', default=30.0, help='Высота слайда в дюймах, по умолчанию: 30')
+@click.argument('img_path')
+@click.argument('output_pptx')
+def create_pptx(img_path, output_pptx, width, height):
     prs = Presentation()
-    prs.slide_width = Inches(53.333)  # 24384000
-    prs.slide_height = Inches(30)  # 13716000
+    prs.slide_width = Inches(width)
+    prs.slide_height = Inches(height)
     blank_slide_layout = prs.slide_layouts[6]
     images = collect_images(img_path)
 
@@ -40,7 +42,7 @@ def create_pptx(img_path, result_pptx):
         text_frame = notes_slide.notes_text_frame
         text_frame.text = ''  # место для заметок докладчика
 
-    prs.save(result_pptx)
+    prs.save(output_pptx)
 
 
 if __name__ == '__main__':
