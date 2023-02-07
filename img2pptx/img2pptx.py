@@ -1,4 +1,5 @@
 import os
+import pathlib
 
 import click
 from pptx import Presentation
@@ -21,28 +22,41 @@ def collect_images(img_path):
 @click.option('--width', '-w', default=53.333, help='Ширина слайда в дюймах, по умолчанию: 53.333')
 @click.option('--height', '-h', default=30.0, help='Высота слайда в дюймах, по умолчанию: 30')
 @click.argument('img_path')
-@click.argument('output_pptx')
-def create_pptx(img_path, output_pptx, width, height):
-    prs = Presentation()
-    prs.slide_width = Inches(width)
-    prs.slide_height = Inches(height)
-    blank_slide_layout = prs.slide_layouts[6]
-    images = collect_images(img_path)
+def create_pptx(img_path, width, height):
+    path = pathlib.Path(img_path)
+    pptx_path = path.parent / f'{path.name}.pptx'
+    if pptx_path.exists():
+        prs = Presentation(pptx_path)
+        images = collect_images(img_path)
 
-    for img in images:
-        slide = prs.slides.add_slide(blank_slide_layout)
+        for i, img in enumerate(images):
+            slide = prs.slides[i]
+            pic = slide.shapes.add_picture(
+                img, 0, 0,
+                width=prs.slide_width,
+                height=prs.slide_height
+            )
+    else:
+        prs = Presentation()
+        prs.slide_width = Inches(width)
+        prs.slide_height = Inches(height)
+        blank_slide_layout = prs.slide_layouts[6]
+        images = collect_images(img_path)
 
-        pic = slide.shapes.add_picture(
-            img, 0, 0,
-            width=prs.slide_width,
-            height=prs.slide_height
-        )
+        for img in images:
+            slide = prs.slides.add_slide(blank_slide_layout)
 
-        notes_slide = slide.notes_slide
-        text_frame = notes_slide.notes_text_frame
-        text_frame.text = ''  # место для заметок докладчика
+            pic = slide.shapes.add_picture(
+                img, 0, 0,
+                width=prs.slide_width,
+                height=prs.slide_height
+            )
 
-    prs.save(output_pptx)
+            # notes_slide = slide.notes_slide
+            # text_frame = notes_slide.notes_text_frame
+            # text_frame.text = ''  # место для заметок докладчика
+
+    prs.save(pptx_path)
 
 
 if __name__ == '__main__':
