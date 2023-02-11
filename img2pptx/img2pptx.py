@@ -1,11 +1,10 @@
+import logging
 import os
 import pathlib
 
 import click
 from pptx import Presentation
 from pptx.util import Inches
-
-import logging
 
 logger = logging.getLogger(__name__)
 
@@ -33,14 +32,18 @@ def create_pptx(img_path, width, height):
 
     if pptx_path.exists():
         prs = Presentation(pptx_path)
+        blank_slide_layout = prs.slide_layouts[6]
 
         for i, img in enumerate(images):
-            slide = prs.slides[i]
+            if i < len(prs.slides) - 1:
+                slide = prs.slides[i]
 
-            # Remove old image
-            pic = slide.shapes[0]
-            pic = pic._element
-            pic.getparent().remove(pic)
+                # Remove old image
+                pic = slide.shapes[0]
+                pic = pic._element
+                pic.getparent().remove(pic)
+            else:
+                slide = prs.slides.add_slide(blank_slide_layout)
 
             # Add new image
             pic = slide.shapes.add_picture(
