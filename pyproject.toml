@@ -1,6 +1,6 @@
 [tool.poetry]
 name = 'img2pptx'
-version = '0.2.0'
+version = '0.2.1'
 description = ''
 authors = ['MasterGowen <mastergowen@gmail.com>']
 packages = [
@@ -8,7 +8,7 @@ packages = [
 ]
 repository = 'https://github.com/MasterGowen/img-to-pptx'
 classifiers = [
-    'Development Status :: 2 - Pre-Alpha',
+    'Development Status :: 4 - Beta',
     'Environment :: Console',
     'Intended Audience :: Information Technology',
     'Programming Language :: Python :: 3.7',
